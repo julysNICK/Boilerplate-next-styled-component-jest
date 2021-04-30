@@ -1,6 +1,118 @@
 This boilerplait serves to speed up the configuration process of the next, styled-component, jest for test with babel.
 
+## Explanations:
+.jest/setup-tests.js
+this directory configure the setup of the jest that is setting the configuration
+```` JS
+import '@testing-library/jest-dom';
+import 'jest-styled-components';
 
+````
+/.storybook/main.js
+In this directory we will configure what the storybook will execute the stories files
+```` JS
+module.exports = {
+  "stories": [
+    "../src/**/*.stories.mdx",
+    "../src/**/*.stories.@(js|jsx|ts|tsx)",
+    "../src/**/stories.@(js|jsx|ts|tsx)",
+  ],
+  "addons": [
+    "@storybook/addon-links",
+    "@storybook/addon-essentials"
+  ]
+}
+````
+
+/.storybook/preview.js 
+This file will set the global storybook what it will perform for every component
+```` JS
+import { ThemeProvider } from 'styled-components';
+import { GlobalStyles } from '../src/styles/global-styles'
+import { theme } from '../src/styles/theme'
+
+export const parameters = {
+  actions: { argTypesRegex: "^on[A-Z].*" },
+  backgrounds: {
+    default: 'light',
+    values: [
+      {
+        name: 'light',
+        value: theme.colors.white,
+      },
+      {
+        name: 'dark',
+        value: theme.colors.primaryColor,
+      },
+    ]
+  }
+}
+
+export const decorators = [
+  (Story) => (
+    <ThemeProvider theme={theme}>
+      <Story />
+      <GlobalStyles />
+    </ThemeProvider>
+  )
+];
+````
+.babelrc
+This file configures the styled component to run on the next
+```` JS
+{
+  "presets": [
+    "next/babel"
+  ],
+  "plugins": [
+    [
+      "styled-components",
+      {
+        "ssr": true,
+        "displayName": true
+      }
+    ]
+  ],
+  "env": {
+    "test": {
+      "plugins": [
+        [
+          "styled-components",
+          {
+            "ssr": false,
+            "displayName": false
+          }
+        ]
+      ]
+    }
+  }
+}
+````
+/jest.config.js
+this file will configure where the jest will get the test files and where it will collect coverage
+```` JS
+module.exports = {
+  coverageDirectory: 'coverage',
+  collectCoverage: true,
+  collectCoverageFrom: [
+    'src/**/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/**/*mock*.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/styles/**/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/config/**/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/pages/**/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/**/stories.{js,jsx,ts,tsx}',
+    '!<rootDir>/src/templates/**/*.{js,jsx,ts,tsx}',
+    '!<rootDir>/node_modules/',
+  ],
+
+  testEnvironment: 'jsdom',
+  testMatch: ['**/__tests__/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[tj]s?(x)'],
+  testPathIgnorePatterns: ['/node_modules/', '/.next/', '/.out/', '/public/'],
+
+  setupFilesAfterEnv: ['<rootDir>/.jest/setup-tests.js'],
+};
+````
 
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 

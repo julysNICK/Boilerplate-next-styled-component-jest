@@ -121,9 +121,25 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 First, run the development server:
 
 ```bash
+npm i
+# or
+yarn add package.add
+```
+second, run the development server:
+
+```bash
 npm run dev
 # or
 yarn dev
+```
+If you want to run the storybook
+
+```bash
+npx sb init
+# later
+yarn storybook
+# or
+npm run storybook
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
